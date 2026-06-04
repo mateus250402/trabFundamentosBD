@@ -1,13 +1,12 @@
-
 -- Inserir Tipos
-INSERT INTO tipo (nome_tipo, against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy)
+INSERT IGNORE INTO tipo (nome_tipo, against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy)
 SELECT DISTINCT
     primary_type,
     against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy
 FROM pokemon_desnormalizado
 WHERE primary_type IS NOT NULL;
 
-INSERT INTO tipo (nome_tipo, against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy)
+INSERT IGNORE INTO tipo (nome_tipo, against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy)
 SELECT DISTINCT
     secondary_type,
     against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy
@@ -15,7 +14,7 @@ FROM pokemon_desnormalizado
 WHERE secondary_type IS NOT NULL;
 
 -- Inserir Habilidades
-INSERT INTO habilidade (nome)
+INSERT IGNORE INTO habilidade (nome)
 SELECT DISTINCT abilities_0 FROM pokemon_desnormalizado WHERE abilities_0 IS NOT NULL
 UNION
 SELECT DISTINCT abilities_1 FROM pokemon_desnormalizado WHERE abilities_1 IS NOT NULL
@@ -70,14 +69,39 @@ WHERE p.abilities_hidden IS NOT NULL;
 
 -- Inserir Evoluções
 INSERT INTO pokemon_evolucao (pokemon_id, evolve_to_id, metodo)
-SELECT
+-- 1ª para 2ª forma
+SELECT DISTINCT
     p_from.national_number,
     p_to.national_number,
     pd.evochain_1
 FROM pokemon_desnormalizado pd
 JOIN pokemon_dados_base p_from ON pd.evochain_0 = p_from.english_name
 JOIN pokemon_dados_base p_to ON pd.evochain_2 = p_to.english_name
-WHERE pd.evochain_1 IS NOT NULL AND pd.evochain_2 IS NOT NULL;
+WHERE pd.evochain_1 IS NOT NULL AND pd.evochain_2 IS NOT NULL
+
+UNION
+
+-- 2ª para 3ª forma
+SELECT DISTINCT
+    p_from.national_number,
+    p_to.national_number,
+    pd.evochain_3
+FROM pokemon_desnormalizado pd
+JOIN pokemon_dados_base p_from ON pd.evochain_2 = p_from.english_name
+JOIN pokemon_dados_base p_to ON pd.evochain_4 = p_to.english_name
+WHERE pd.evochain_3 IS NOT NULL AND pd.evochain_4 IS NOT NULL
+
+UNION
+
+-- 3ª para 4ª forma
+SELECT DISTINCT
+    p_from.national_number,
+    p_to.national_number,
+    pd.evochain_5
+FROM pokemon_desnormalizado pd
+JOIN pokemon_dados_base p_from ON pd.evochain_4 = p_from.english_name
+JOIN pokemon_dados_base p_to ON pd.evochain_6 = p_to.english_name
+WHERE pd.evochain_5 IS NOT NULL AND pd.evochain_6 IS NOT NULL;
 
 -- Inserir Formas Especiais
 INSERT INTO pokemon_formas_especiais (pokemon_id, tipo_forma, nome_forma)
@@ -86,4 +110,3 @@ UNION
 SELECT national_number, 'Mega', mega_evolution FROM pokemon_desnormalizado WHERE mega_evolution IS NOT NULL
 UNION
 SELECT national_number, 'Mega Alt', mega_evolution_alt FROM pokemon_desnormalizado WHERE mega_evolution_alt IS NOT NULL;
-
