@@ -1,17 +1,12 @@
 -- Inserir Tipos
-INSERT IGNORE INTO tipo (nome_tipo, against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy)
+INSERT INTO tipo (nome_tipo, against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy)
 SELECT DISTINCT
     primary_type,
     against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy
 FROM pokemon_desnormalizado
-WHERE primary_type IS NOT NULL;
+WHERE primary_type IS NOT NULL 
+  AND (secondary_type IS NULL OR secondary_type = '' or secondary_type = primary_type);
 
-INSERT IGNORE INTO tipo (nome_tipo, against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy)
-SELECT DISTINCT
-    secondary_type,
-    against_normal, against_fire, against_water, against_electric, against_grass, against_ice, against_fighting, against_poison, against_ground, against_flying, against_psychic, against_bug, against_rock, against_ghost, against_dragon, against_dark, against_steel, against_fairy
-FROM pokemon_desnormalizado
-WHERE secondary_type IS NOT NULL;
 
 -- Inserir Habilidades
 INSERT IGNORE INTO habilidade (nome)
@@ -40,10 +35,10 @@ SELECT national_number, hp, attack, defense, sp_attack, sp_defense, speed
 FROM pokemon_desnormalizado;
 
 -- Inserir Relação Pokémon-Tipo
-INSERT INTO pokemon_tipo (pokemon_id, nome_tipo)
-SELECT national_number, primary_type FROM pokemon_desnormalizado WHERE primary_type IS NOT NULL
+INSERT INTO pokemon_tipo (pokemon_id, nome_tipo, slot)
+SELECT national_number, primary_type, 1 FROM pokemon_desnormalizado WHERE primary_type IS NOT NULL AND primary_type <> ''
 UNION
-SELECT national_number, secondary_type FROM pokemon_desnormalizado WHERE secondary_type IS NOT NULL;
+SELECT national_number, secondary_type, 2 FROM pokemon_desnormalizado WHERE secondary_type IS NOT NULL AND secondary_type <> '' AND secondary_type <> primary_type;
 
 -- Inserir Relação Pokémon-Habilidade
 INSERT INTO pokemon_habilidade (pokemon_id, habilidade_id, is_hidden)

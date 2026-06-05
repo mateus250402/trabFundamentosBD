@@ -26,7 +26,7 @@ def safe_convert(value, target_type):
         return None
 
 def main():
-    db_connection = create_connection("localhost", "root", "021086", "pokemons")
+    db_connection = create_connection("localhost", "root", "mysql1", "pokemons")
     if db_connection is None:
         return
 

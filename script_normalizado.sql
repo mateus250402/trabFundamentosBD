@@ -60,7 +60,8 @@ CREATE TABLE pokemon_status (
 -- Tabela Intermediária:
 CREATE TABLE pokemon_tipo (
     pokemon_id INT,
-    nome_tipo VARCHAR(50),
+    nome_tipo VARCHAR(50),  
+    slot INT,
     PRIMARY KEY (pokemon_id, nome_tipo),
     FOREIGN KEY (pokemon_id) REFERENCES pokemon_dados_base(national_number),
     FOREIGN KEY (nome_tipo) REFERENCES tipo(nome_tipo)
@@ -78,9 +79,10 @@ CREATE TABLE pokemon_habilidade (
 
 -- Tabela de Evolução
 CREATE TABLE pokemon_evolucao (
-    pokemon_id INT PRIMARY KEY,
-    evolve_to_id INT NULL,
-    metodo VARCHAR(50) NULL,
+    pokemon_id INT,
+    evolve_to_id INT,
+    metodo TEXT NULL,
+    PRIMARY KEY (pokemon_id, evolve_to_id),
     FOREIGN KEY (pokemon_id) REFERENCES pokemon_dados_base(national_number),
     FOREIGN KEY (evolve_to_id) REFERENCES pokemon_dados_base(national_number)
 );
