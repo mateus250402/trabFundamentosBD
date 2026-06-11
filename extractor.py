@@ -11,13 +11,12 @@ def create_connection(host_name, user_name, user_password, db_name):
             passwd=user_password,
             database=db_name
         )
-        print("Connection to MySQL DB successful")
+        print("Conectado ao MySQL!")
     except Error as e:
-        print(f"The error '{e}' occurred")
+        print(f"Erro: '{e}' ")
     return connection
 
 def safe_convert(value, target_type):
-    """Safely convert a value to a target type (int or float), returning None on failure."""
     if value is None or value == '':
         return None
     try:
@@ -80,7 +79,7 @@ def main():
         data_to_insert = []
         with open('data/pokemon.csv', 'r', encoding='utf-16') as file:
             reader = csv.reader(file, delimiter='\t')
-            next(reader)  # Skip header row
+            next(reader)
             for i, row in enumerate(reader):
                 row_data = row[:len(expected_columns)]
                 while len(row_data) < len(expected_columns):
@@ -98,7 +97,7 @@ def main():
         cursor = db_connection.cursor()
         
         cursor.execute("TRUNCATE TABLE pokemon_desnormalizado;")
-        print("Table pokemon_desnormalizado truncated.")
+        print("Tabela pokemon_desnormalizado truncada.")
 
         columns_sql = ", ".join([f"`{col}`" for col in expected_columns])
         placeholders = ", ".join(["%s"] * len(expected_columns))
@@ -107,14 +106,14 @@ def main():
         cursor.executemany(insert_query, data_to_insert)
         db_connection.commit()
 
-        print(f"{cursor.rowcount} records inserted into pokemon_desnormalizado.")
+        print(f"{cursor.rowcount} registros inseridos em pokemon_desnormalizado.")
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"Erro: {e}")
     finally:
         if db_connection and db_connection.is_connected():
             db_connection.close()
-            print("MySQL connection is closed")
+            print("Conexão MySQL fechada")
 
 if __name__ == '__main__':
     main()
